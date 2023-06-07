@@ -2,6 +2,8 @@ from datetime import datetime
 from itertools import product
 from string import ascii_lowercase
 
+import Board
+
 pieces = {
         'K': '♔',  # White King
         'Q': '♕',  # White Queen
@@ -16,6 +18,23 @@ pieces = {
         'n': '♞',  # Black Knight
         'p': '♟'   # Black Pawn
 }
+
+class Piece:
+    def __init__(self, piece_id: str = None) -> None:
+        self.piece_id = piece_id
+        self.icon = pieces[piece_id]
+
+    def __str__(self) -> str:
+        return self.icon
+    
+    def __repr__(self) -> str:
+        return str(self)
+    
+    def move(self, board: Board) -> None:
+        pass
+
+class IllegalMoveException(Exception):
+    pass
 
 class Board:
     def __init__(self) -> None:
@@ -47,7 +66,7 @@ class Board:
         for row in self.board:
             row_str = " ".join(element.icon if isinstance(element, Piece) else ' ' for element in row)
             rows.append(row_str)
-        return "\n".join(rows)
+        return "\n" + "\n".join(rows) + "\n"
     
     def __repr__(self) -> str:
         return str(self)
@@ -61,19 +80,6 @@ class Board:
             self.board = list(zip(*self.board[::-1]))
 
         print(self)
-
-    
-class Piece:
-    
-    def __init__(self, piece_id: str) -> None:
-        self.piece_id = piece_id
-        self.icon = pieces[piece_id]
-
-    def __str__(self) -> str:
-        return self.icon
-    
-    def __repr__(self) -> str:
-        return str(self)
 
 class PGNHandler:
     """
