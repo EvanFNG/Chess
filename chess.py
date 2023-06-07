@@ -21,8 +21,8 @@ class Board:
     def __init__(self) -> None:
         self.board = [
             # Black
-            [ pieces['r'], pieces['n'], pieces['b'], pieces['q'], pieces['k'], pieces['b'], pieces['n'], pieces['r'] ],
-            [ pieces['p'] for x in range(8) ],
+            [ Piece('r'), Piece('n'), Piece('b'), Piece('q'), Piece('k'), Piece('b'), Piece('n'), Piece('r') ],
+            [ Piece('p') for x in range(8) ],
 
             # Board center
             [ '' for i in range(8) ],
@@ -31,8 +31,8 @@ class Board:
             [ '' for i in range(8) ],
 
             # White
-            [ pieces['P'] for j in range(8) ],
-            [ pieces['R'], pieces['N'], pieces['B'], pieces['Q'], pieces['K'], pieces['B'], pieces['N'], pieces['R'] ]
+            [ Piece('P') for j in range(8) ],
+            [ Piece('R'), Piece('N'), Piece('B'), Piece('Q'), Piece('K'), Piece('B'), Piece('N'), Piece('R') ]
         ]
 
         # Valid board coordinates
@@ -45,7 +45,7 @@ class Board:
         """
         rows = []
         for row in self.board:
-            row_str = " ".join(str(element) for element in row)
+            row_str = " ".join(element.icon if isinstance(element, Piece) else ' ' for element in row)
             rows.append(row_str)
         return "\n".join(rows)
     
@@ -68,6 +68,12 @@ class Piece:
     def __init__(self, piece_id: str) -> None:
         self.piece_id = piece_id
         self.icon = pieces[piece_id]
+
+    def __str__(self) -> str:
+        return self.icon
+    
+    def __repr__(self) -> str:
+        return str(self)
 
 class PGNHandler:
     """
