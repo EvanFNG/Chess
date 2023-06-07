@@ -4,7 +4,7 @@ from string import ascii_lowercase
 
 import Board
 
-pieces = {
+PIECES = {
         'K': '♔',  # White King
         'Q': '♕',  # White Queen
         'R': '♖',  # White Rook
@@ -22,7 +22,8 @@ pieces = {
 class Piece:
     def __init__(self, piece_id: str = None) -> None:
         self.piece_id = piece_id
-        self.icon = pieces[piece_id]
+        self.icon = PIECES[piece_id]
+        self.move_count = 0
 
     def __str__(self) -> str:
         return self.icon
@@ -31,6 +32,7 @@ class Piece:
         return str(self)
     
     def move(self, board: Board) -> None:
+        self.move_count += 1
         pass
 
 class IllegalMoveException(Exception):
