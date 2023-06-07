@@ -1,6 +1,5 @@
 from datetime import datetime
 from itertools import product
-from string import ascii_lowercase
 
 PIECES = {
         'K': '♔',  # White King
@@ -17,10 +16,22 @@ PIECES = {
         'p': '♟'   # Black Pawn
 }
 
+class IllegalMoveException(Exception):
+    """
+    Handle invalid move choices.
+    """
+    pass
+
 class Piece:
-    def __init__(self, piece_id: str = None) -> None:
+    def __init__(self, piece_id: str) -> None:
         self.piece_id = piece_id
-        self.icon = PIECES[piece_id]
+
+        try:
+            self.icon = PIECES[piece_id]
+
+        except KeyError:
+            print(f"Error: piece_id must be one of {list(PIECES.keys())}")
+
         self.move_count = 0
 
     def __str__(self) -> str:
@@ -30,11 +41,11 @@ class Piece:
         return str(self)
     
     def move(self) -> None:
+        """
+        Move the piece to a specified location on the current game Board.
+        Increment move_count. This is needed for Castling and En Passant.
+        """
         self.move_count += 1
-        pass
-
-class IllegalMoveException(Exception):
-    pass
 
 class Board:
     def __init__(self) -> None:
@@ -54,19 +65,35 @@ class Board:
             [ Piece('R'), Piece('N'), Piece('B'), Piece('Q'), Piece('K'), Piece('B'), Piece('N'), Piece('R') ]
         ]
 
+        # Controls whether to use piece icons or not.
+        # To toggle, use the switch_icons method.
+        self.icons = True
+
+        # Rows
+        ranks = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+        # Columns
+        files = range(1,10)
+
         # Valid board coordinates
-        self.coords = [ ''.join(tup) for tup in list(product([i for i in ascii_lowercase[0:8]], [str(x) for x in range(9)])) ]
+        self.coords = [ ''.join(tup) for tup in list(product(ranks, [str(x) for x in files])) ]
 
     def __str__(self) -> str:
         """
         Nicely prints the current board.
-        Courtesy of ChatGPT
         """
-        rows = []
-        for row in self.board:
-            row_str = " ".join(element.icon if isinstance(element, Piece) else ' ' for element in row)
-            rows.append(row_str)
-        return "\n" + "\n".join(rows) + "\n"
+        ranks = []
+
+        if self.icons:
+            for rank in self.board:
+                rank_str = " ".join(element.icon if isinstance(element, Piece) else ' ' for element in rank)
+                ranks.append(rank_str)
+
+        else:
+            for rank in self.board:
+                rank_str = " ".join(element.piece_id if isinstance(element, Piece) else ' ' for element in rank)
+                ranks.append(rank_str)
+
+        return "\n" + "\n".join(ranks) + "\n"
     
     def __repr__(self) -> str:
         return str(self)
@@ -78,6 +105,14 @@ class Board:
 
         for i in range(2):
             self.board = list(zip(*self.board[::-1]))
+
+        print(self)
+
+    def switch_icons(self) -> None:
+        """
+        Swap between viewing piece icons or IDs.
+        """
+        self.icons = not self.icons
 
         print(self)
 
