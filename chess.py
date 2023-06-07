@@ -2,8 +2,6 @@ from datetime import datetime
 from itertools import product
 from string import ascii_lowercase
 
-import Board
-
 PIECES = {
         'K': '♔',  # White King
         'Q': '♕',  # White Queen
@@ -31,7 +29,7 @@ class Piece:
     def __repr__(self) -> str:
         return str(self)
     
-    def move(self, board: Board) -> None:
+    def move(self) -> None:
         self.move_count += 1
         pass
 
