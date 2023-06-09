@@ -22,6 +22,19 @@ class IllegalMoveException(Exception):
     """
     pass
 
+class InvalidCoordinatesException(IllegalMoveException):
+    pass
+
+class BlockedByPieceException(IllegalMoveException):
+    pass
+
+class InCheckException(IllegalMoveException):
+    """
+    Handle cases where a player is in check, and tries to make a move that does not take them out of check.
+    Also handle cases where a player tries to make a move that would reveal an attack on their King.
+    """
+    pass
+
 class Piece:
     def __init__(self, piece_id: str) -> None:
         self.piece_id = piece_id
@@ -40,14 +53,26 @@ class Piece:
     def __repr__(self) -> str:
         return str(self)
     
-    def move(self) -> None:
+    def move(self, coordinates: str) -> None:
         """
         Move the piece to a specified location on the current game Board.
         Increment move_count. This is needed for Castling and En Passant.
         """
-        self.move_count += 1
+        if coordinates not in Board.coords:
+            raise InvalidCoordinatesException("Invalid coordinates. Coordinates must be of the form `a1`, for a-h and 1-8.")
+
+        match self.piece_id:
+
+            case 'p' | 'P':
+                print(f"Moved pawn to {coordinates}")
 
 class Board:
+    # Rows
+    ranks = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+    # Columns
+    files = range(1,10)
+    coords = [ ''.join(tup) for tup in list(product(ranks, [str(x) for x in files])) ]
+
     def __init__(self) -> None:
         self.board = [
             # Black
@@ -68,14 +93,6 @@ class Board:
         # Controls whether to use piece icons or not.
         # To toggle, use the switch_icons method.
         self.icons = True
-
-        # Rows
-        ranks = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
-        # Columns
-        files = range(1,10)
-
-        # Valid board coordinates
-        self.coords = [ ''.join(tup) for tup in list(product(ranks, [str(x) for x in files])) ]
 
     def __str__(self) -> str:
         """
